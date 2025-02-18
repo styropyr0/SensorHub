@@ -18,6 +18,7 @@ public:
     double readTemperature();
     double readPressure();
     double readHumidity();
+    double readGas();
     void showLogs(bool show);
     bool setTemperatureOversampling(uint8_t oss);
     bool setPressureOversampling(uint8_t oss);
@@ -84,16 +85,21 @@ private:
     int8_t par_h8[5] = {0};
     uint8_t par_h6 = 0;
     uint8_t par_p10 = 0;
+    int8_t par_g1 = 0, par_g3 = 0, res_heat_range = 0, res_heat_val = 0;
+    int16_t par_g2 = 0;
 
     // CALIBRATED READINGS
-    double t_fine = 0, p_fine = 0, h_fine = 0;
+    double t_fine = 0, p_fine = 0, h_fine = 0, g_fine = 0;
 
     int32_t readRawTemp();
     int32_t readRawPres();
-    int32_t readRawHum();
+    int16_t readRawHum();
+    int16_t readRawGas();
     double readUCTemp(int32_t adc_T);
     double readUCPres(int32_t adc_P);
-    double readUCHum(int32_t adc_h);
+    double readUCHum(int16_t adc_H);
+    uint8_t readUCGas(uint8_t adc_G);
+    bool checkGasMeasurementCompletion();
     void printLog(String log) override;
     void readCalibParams();
 };

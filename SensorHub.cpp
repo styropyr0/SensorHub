@@ -18,7 +18,7 @@ void SensorHub::i2c_execute(uint8_t address, uint8_t reg, uint8_t data)
     Wire.endTransmission(true);
 }
 
-bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, uint8_t *data, uint8_t length)
+bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, uint8_t * const data, uint8_t length)
 {
     startTransmission(addr, reg);
     Wire.requestFrom(addr, length);
@@ -29,7 +29,7 @@ bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, uint8_t *data, uint8_t l
     return true;
 }
 
-bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, int8_t *data, uint8_t length)
+bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, int8_t * const data, uint8_t length)
 {
     startTransmission(addr, reg);
     Wire.requestFrom(addr, length);
