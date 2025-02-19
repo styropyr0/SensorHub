@@ -42,6 +42,8 @@
 #define BME_688_CTRL_GAS_REG 0x71
 #define BME_688_GAS_RAW_REG 0x2C
 #define BME_688_GAS_RANGE_REG 0x2C
+#define BME_688_GAS_ADC_REG 0x2C
+#define BME_688_GAS_RANGE_REG 0x2D
 
 #define BME_688_TEMP_CALIB1_REG 0xE9
 #define BME_688_TEMP_CALIB2_REG 0x8A
@@ -67,7 +69,7 @@
 #define BME_688_HUM_CALIB7_REG 0xE8
 
 #define BME_688_GAS_CALIB1_REG 0xED
-#define BME_688_GAS_CALIB2_REG 0xEC
+#define BME_688_GAS_CALIB2_REG 0xEB
 #define BME_688_GAS_CALIB3_REG 0xEE
 #define BME_688_GAS_HEAT_RANGE_REG 0x02
 #define BME_688_GAS_HEAT_VAL_REG 0x00
@@ -92,22 +94,20 @@
 #define BME_688_HEAT_RANGE_MASK 0x18
 #define BME_688_GAS_RANGE_REG_MASK 0x0F
 #define BME_688_GAS_MEAS_INDEX_MASK 0x0F
+#define BME_688_GAS_RANGE_VAL_MASK 0x07
+#define BME_688_GAS_RUN 0x20
 
 #define BME_688_GAS_MEAS_FINISH 0x30
 #define BME_688_GAS_HEATING_INSUFFICIENT 0x10
 #define BME_688_GAS_RESULT_NOT_READY 0x00
+#define BME_688_GAS_PROFILE_START 0x00
+#define BME_688_HEAT_PLATE_MAX_TEMP 0x1A9
+#define BME_688_HEAT_PLATE_ULTRA_TEMP 0x258
 
 // Gas wait time registers
-#define BME_688_GAS_WAIT_PROFILE1_REG 0x64
-#define BME_688_GAS_WAIT_PROFILE2_REG 0x65
-#define BME_688_GAS_WAIT_PROFILE3_REG 0x66
-#define BME_688_GAS_WAIT_PROFILE4_REG 0x67
-#define BME_688_GAS_WAIT_PROFILE5_REG 0x68
-#define BME_688_GAS_WAIT_PROFILE6_REG 0x69
-#define BME_688_GAS_WAIT_PROFILE7_REG 0x6A
-#define BME_688_GAS_WAIT_PROFILE8_REG 0x6B
-#define BME_688_GAS_WAIT_PROFILE9_REG 0x6C
-#define BME_688_GAS_WAIT_PROFILE10_REG 0x6D
+#define BME_688_GAS_WAIT_PROFILE_REG 0x64
+#define BME_688_GAS_RES_HEAT_PROFILE_REG 0x5A
+#define BME_688_GAS_START_TEMP 0xC8
 
 // Gas wait time multiplication factor
 #define BME_688_GAS_WAIT_MULFAC1 0x00
@@ -116,16 +116,6 @@
 #define BME_688_GAS_WAIT_MULFAC4 0x03
 
 // Heater temperature (resistance) registers
-#define BME_688_GAS_RES_HEAT_PROFILE1_REG 0x5A
-#define BME_688_GAS_RES_HEAT_PROFILE2_REG 0x5B
-#define BME_688_GAS_RES_HEAT_PROFILE3_REG 0x5C
-#define BME_688_GAS_RES_HEAT_PROFILE4_REG 0x5D
-#define BME_688_GAS_RES_HEAT_PROFILE5_REG 0x5E
-#define BME_688_GAS_RES_HEAT_PROFILE6_REG 0x5F
-#define BME_688_GAS_RES_HEAT_PROFILE7_REG 0x60
-#define BME_688_GAS_RES_HEAT_PROFILE8_REG 0x61
-#define BME_688_GAS_RES_HEAT_PROFILE9_REG 0x62
-#define BME_688_GAS_RES_HEAT_PROFILE10_REG 0x63
 
 // Gas Wait Times (in ms)
 #define BME_688_GAS_WAIT_PROFILE1 0x3C
@@ -162,6 +152,11 @@
 #define BME_688_HUM_CAL_EXCEPT "Exception: Failed to read humidity calibration parameters"
 #define BME_688_VALUE_INVALID "Invalid value. Use a value within the range."
 #define BME_688_READ_FAILURE "Exception: Failed to read from BME688"
+#define BME_688_GAS_MEAS_FAILURE "Exception: Gas measurement incomplete. Heating might be too high for the provided wait time."
+#define BME_688_TEMP_WARNING "Warning: Higher temperatures will degrade the lifespan of the sensor. \nThis operation has been automatically denied for safety. \nIf you still wish to use high temperatures, call ignoreUnsafeTemperatureWarnings(false)\nIn safe mode, Temperature limit is 425°C. Bypassing this protection will raise the limit to 600°C."
+#define BME_688_TEMP_EXCEED_MAX_LIMIT "Exception: Operation blocked. The temperature value exceeds maximum limit."
+#define BME_688_PROFILE_OUT_OF_RANGE "Exception: Operation blocked. Profile value should be between 0 and 9."
+#define BME_688_TEMP_UNSAFE_WARNING "Warning: Higher temperatures will degrade the lifespan of the sensor. It is recommended to use a value under 425°C"
 
 #endif // __cplusplus
 #endif // BME688DEFS

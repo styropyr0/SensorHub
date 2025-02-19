@@ -18,11 +18,13 @@ public:
     double readTemperature();
     double readPressure();
     double readHumidity();
-    double readGas();
+    double readGasForTemperature(uint16_t temperature);
+    double readGas(uint8_t profile);
     void showLogs(bool show);
     bool setTemperatureOversampling(uint8_t oss);
     bool setPressureOversampling(uint8_t oss);
     bool setHumidityOversampling(uint8_t oss);
+    void ignoreUnsafeTemperatureWarnings(bool ignore);
     // int readPressure();
     // int readHumidity();
     // int readGas();
@@ -84,12 +86,16 @@ private:
     uint16_t par_h16[2] = {0};
     int8_t par_h8[5] = {0};
     uint8_t par_h6 = 0;
-    uint8_t par_p10 = 0;
-    int8_t par_g1 = 0, par_g3 = 0, res_heat_range = 0, res_heat_val = 0;
+    uint8_t par_p10 = 0, res_heat_range = 0;
+    int8_t par_g1 = 0, par_g3 = 0, res_heat_val = 0;
     int16_t par_g2 = 0;
+    bool allowHighTemps = false;
 
     // CALIBRATED READINGS
-    double t_fine = 0, p_fine = 0, h_fine = 0, g_fine = 0;
+    double t_fine = 0, p_fine = 0, h_fine = 0, g_fine = 0, g_res = 0;
+
+    // Gas Sensor Profile data
+    uint8_t measProfile = 0, targetTemp = 0, targetWaitTime = 0;
 
     int32_t readRawTemp();
     int32_t readRawPres();
@@ -98,7 +104,9 @@ private:
     double readUCTemp(int32_t adc_T);
     double readUCPres(int32_t adc_P);
     double readUCHum(int16_t adc_H);
-    uint8_t readUCGas(uint8_t adc_G);
+    uint8_t readUCGas(uint16_t adc_G);
+    double startGasMeasurement(uint8_t profile, uint8_t waitTime);
+    bool setHeatProfiles();
     bool checkGasMeasurementCompletion();
     void printLog(String log) override;
     void readCalibParams();

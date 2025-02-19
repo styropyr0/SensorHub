@@ -109,11 +109,26 @@ void BME688::readCalibParams()
         printLog(BME_688_HUM_CAL_EXCEPT);
 
     if (!(i2c_readByte(bme688, BME_688_GAS_CALIB1_REG, &par_g1, 1) &&
-          i2c_read_Xbit(bme688, BME_688_GAS_CALIB2_REG, &par_g2, 16) &&
+          i2c_read_Xbit_LE(bme688, BME_688_GAS_CALIB2_REG, &par_g2, 16) &&
           i2c_readByte(bme688, BME_688_GAS_CALIB3_REG, &par_g3, 1) &&
           i2c_readByte(bme688, BME_688_GAS_HEAT_RANGE_REG, &res_heat_range, 1) &&
           i2c_readByte(bme688, BME_688_GAS_HEAT_VAL_REG, &res_heat_val, 1)))
         printLog(BME_688_TEMP_CAL_EXCEPT);
+
+    setHeatProfiles();
+}
+
+bool BME688::setHeatProfiles()
+{
+    readTemperature();
+    for (uint8_t i = 0; i < 9; i++)
+    {
+        yield();
+        uint8_t gasTemp = readUCGas(BME_688_GAS_START_TEMP + i * 25);
+        i2c_execute(bme688, BME_688_GAS_WAIT_PROFILE_REG + i, BME_688_GAS_WAIT_MULFAC1 << 6 | (uint8_t)(0.25 * gasTemp - 22));
+        i2c_execute(bme688, BME_688_GAS_RES_HEAT_PROFILE_REG + i, gasTemp);
+    }
+    return true;
 }
 
 bool BME688::isConnected()
@@ -214,7 +229,7 @@ double BME688::readUCHum(int16_t adc_H)
     return h_fine;
 }
 
-uint8_t BME688::readUCGas(uint8_t target_temp)
+uint8_t BME688::readUCGas(uint16_t target_temp)
 {
     double t_fine = this->t_fine / 5120.0;
     double var1 = 0, var2 = 0, var3 = 0, var4 = 0, var5 = 0;
@@ -224,7 +239,7 @@ uint8_t BME688::readUCGas(uint8_t target_temp)
     var3 = (double)par_g3 / 1024.0;
     var4 = var1 * (1.0 + (var2 * (double)target_temp));
     var5 = var4 + (var3 * (double)t_fine);
-    g_fine = (uint8_t)(3.4 * ((var5 * (4.0 / (4.0 + (double)(res_heat_range & BME_688_HEAT_RANGE_MASK))) * (1.0 / (1.0 + ((double)res_heat_val * 0.002)))) - 25));
+    g_fine = (uint8_t)(3.4 * ((var5 * (4.0 / (4.0 + (double)((res_heat_range & BME_688_HEAT_RANGE_MASK) >> 4))) * (1.0 / (1.0 + ((double)res_heat_val * 0.002)))) - 25));
     return g_fine;
 }
 
@@ -239,14 +254,14 @@ bool BME688::checkGasMeasurementCompletion()
 double BME688::readTemperature()
 {
     i2c_execute(bme688, BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
-    delay(500);
+    delay(10);
     return readUCTemp(readRawTemp());
 }
 
 double BME688::readPressure()
 {
     i2c_execute(bme688, BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
-    delay(500);
+    delay(10);
     return readUCPres(readRawPres());
 }
 
@@ -254,18 +269,69 @@ double BME688::readHumidity()
 {
     i2c_execute(bme688, BME_688_CTRL_MEAS_HUM_REG, hum_oss);
     i2c_execute(bme688, BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
-    delay(500);
+    delay(10);
     return readUCHum(readRawHum());
 }
 
-double BME688::readGas()
+double BME688::readGasForTemperature(uint16_t temperature)
 {
-    i2c_execute(bme688, BME_688_CTRL_GAS_REG, 0x20);
-    i2c_execute(bme688, BME_688_GAS_WAIT_PROFILE1, BME_688_GAS_WAIT_MULFAC1 << 6 | BME_688_GAS_WAIT_PROFILE4);
-    i2c_execute(bme688, BME_688_GAS_RES_HEAT_PROFILE1_REG, readUCGas(BME_688_GAS_HEAT_PROFILE1));
+    if (allowHighTemps || temperature <= BME_688_HEAT_PLATE_MAX_TEMP)
+    {
+        if (temperature < BME_688_HEAT_PLATE_ULTRA_TEMP)
+        {
+            uint8_t t_temp = readUCGas((uint16_t)temperature);
+            uint8_t t_wait = (uint8_t)(0.25 * t_temp - 17);
+            i2c_execute(bme688, BME_688_CTRL_GAS_REG, 0x20);
+            i2c_execute(bme688, BME_688_GAS_WAIT_PROFILE_REG, t_wait);
+            i2c_execute(bme688, BME_688_GAS_RES_HEAT_PROFILE_REG, t_temp);
+            return startGasMeasurement(BME_688_GAS_PROFILE_START, t_wait + 5);
+        }
+        else
+            printLog(BME_688_TEMP_EXCEED_MAX_LIMIT);
+    }
+    else
+        printLog(BME_688_TEMP_WARNING);
+
+    return -1.0;
+}
+
+double BME688::readGas(uint8_t profile)
+{
+    if (profile >= 0 && profile < 10)
+        return startGasMeasurement(profile, (uint8_t)(0.25 * readUCGas(BME_688_GAS_START_TEMP * profile) - 17));
+    else
+        printLog(BME_688_PROFILE_OUT_OF_RANGE);
+    return -1.0;
+}
+
+double BME688::startGasMeasurement(uint8_t profile, uint8_t waitTime)
+{
+    i2c_execute(bme688, BME_688_CTRL_GAS_REG, BME_688_GAS_RUN | profile);
     i2c_execute(bme688, BME_688_CTRL_MEAS_REG, mode);
-    delay(pow(2, BME_688_GAS_WAIT_MULFAC1 * 2) * BME_688_GAS_WAIT_PROFILE4 + 10);
-    if (checkGasMeasurementCompletion())
-        printLog("Gas measurement complete");
-    return g_fine;
+    delay(waitTime);
+    if (!checkGasMeasurementCompletion())
+    {
+        printLog(BME_688_GAS_MEAS_FAILURE);
+        return -2.0;
+    }
+    uint16_t gas_adc = 0;
+    uint8_t gas_range = 0;
+
+    i2c_read_Xbit(bme688, BME_688_GAS_ADC_REG, &gas_adc, 10);
+    i2c_readByte(bme688, BME_688_GAS_RANGE_REG, &gas_range, 1);
+
+    gas_range &= BME_688_GAS_RANGE_VAL_MASK;
+
+    uint32_t var1 = int32_t(262144) >> gas_range;
+    int32_t var2 = (int32_t)gas_adc - int32_t(512);
+    var2 *= int32_t(3);
+    var2 = int32_t(4096) + var2;
+    g_res = 1000000.0f * (float)var1 / (float)var2;
+    return g_res;
+}
+
+void BME688::ignoreUnsafeTemperatureWarnings(bool ignore)
+{
+    allowHighTemps = ignore;
+    printLog(BME_688_TEMP_UNSAFE_WARNING);
 }
