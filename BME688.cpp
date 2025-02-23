@@ -3,7 +3,7 @@
 #include "SensorHubTemplates.h"
 #include <Wire.h>
 
-BME688::BME688()
+BME688::BME688() : sensorHub(BME688_I2C_ADDR_PRIMARY)
 {
 }
 
@@ -11,9 +11,9 @@ bool BME688::begin()
 {
     if (isConnected())
     {
-        i2c_execute(bme688, BME_688_CTRL_MEAS_HUM_REG, hum_oss);
-        i2c_execute(bme688, BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | BME_688_FORCED_MODE);
-        i2c_execute(bme688, BME_688_IIR_FILTER_REG, BME_688_IIR_FILTER_C15);
+        sensorHub.i2c_execute(BME_688_CTRL_MEAS_HUM_REG, hum_oss);
+        sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | BME_688_FORCED_MODE);
+        sensorHub.i2c_execute(BME_688_IIR_FILTER_REG, BME_688_IIR_FILTER_C15);
         readCalibParams();
     }
     else
@@ -27,9 +27,9 @@ bool BME688::begin(uint8_t mode)
     {
         if (mode <= BME_688_PARALLEL_MODE)
         {
-            i2c_execute(bme688, BME_688_CTRL_MEAS_HUM_REG, BME_688_OSS_1);
-            i2c_execute(bme688, BME_688_CTRL_MEAS_REG, BME_688_OSS_1 << 5 | BME_688_OSS_1 << 2 | mode);
-            i2c_execute(bme688, BME_688_IIR_FILTER_REG, BME_688_IIR_FILTER_C15);
+            sensorHub.i2c_execute(BME_688_CTRL_MEAS_HUM_REG, BME_688_OSS_1);
+            sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, BME_688_OSS_1 << 5 | BME_688_OSS_1 << 2 | mode);
+            sensorHub.i2c_execute(BME_688_IIR_FILTER_REG, BME_688_IIR_FILTER_C15);
             readCalibParams();
         }
         else
@@ -49,9 +49,9 @@ bool BME688::begin(uint8_t mode, uint8_t oss)
     {
         if (mode <= BME_688_PARALLEL_MODE && oss <= BME_688_OSS_16)
         {
-            i2c_execute(bme688, BME_688_CTRL_MEAS_HUM_REG, oss);
-            i2c_execute(bme688, BME_688_CTRL_MEAS_REG, oss << 5 | oss << 2 | mode);
-            i2c_execute(bme688, BME_688_IIR_FILTER_REG, BME_688_IIR_FILTER_C15);
+            sensorHub.i2c_execute(BME_688_CTRL_MEAS_HUM_REG, oss);
+            sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, oss << 5 | oss << 2 | mode);
+            sensorHub.i2c_execute(BME_688_IIR_FILTER_REG, BME_688_IIR_FILTER_C15);
             readCalibParams();
         }
         else
@@ -82,37 +82,37 @@ void BME688::showLogs(bool show)
 
 void BME688::readCalibParams()
 {
-    if (!(i2c_read_Xbit_LE(bme688, BME_688_TEMP_CALIB1_REG, &par_t16[0], 16) &&
-          i2c_read_Xbit_LE(bme688, BME_688_TEMP_CALIB2_REG, &par_t16[1], 16) &&
-          i2c_readByte(bme688, BME_688_TEMP_CALIB3_REG, &par_t3, 1)))
+    if (!(sensorHub.i2c_read_Xbit_LE(BME_688_TEMP_CALIB1_REG, &par_t16[0], 16) &&
+          sensorHub.i2c_read_Xbit_LE(BME_688_TEMP_CALIB2_REG, &par_t16[1], 16) &&
+          sensorHub.i2c_readByte(BME_688_TEMP_CALIB3_REG, &par_t3, 1)))
         printLog(BME_688_TEMP_CAL_EXCEPT);
 
-    if (!(i2c_read_Xbit_LE(bme688, BME_688_PRES_CALIB1_REG, &par_p1, 16) &&
-          i2c_read_Xbit_LE(bme688, BME_688_PRES_CALIB2_REG, &par_p16[1], 16) &&
-          i2c_readByte(bme688, BME_688_PRES_CALIB3_REG, &par_p8[0], 1) &&
-          i2c_read_Xbit_LE(bme688, BME_688_PRES_CALIB4_REG, &par_p16[2], 16) &&
-          i2c_read_Xbit_LE(bme688, BME_688_PRES_CALIB5_REG, &par_p16[3], 16) &&
-          i2c_readByte(bme688, BME_688_PRES_CALIB6_REG, &par_p8[1], 1) &&
-          i2c_readByte(bme688, BME_688_PRES_CALIB7_REG, &par_p8[2], 1) &&
-          i2c_read_Xbit_LE(bme688, BME_688_PRES_CALIB8_REG, &par_p16[4], 16) &&
-          i2c_read_Xbit_LE(bme688, BME_688_PRES_CALIB9_REG, &par_p16[5], 16) &&
-          i2c_readByte(bme688, BME_688_PRES_CALIB10_REG, &par_p10, 1)))
+    if (!(sensorHub.i2c_read_Xbit_LE(BME_688_PRES_CALIB1_REG, &par_p1, 16) &&
+          sensorHub.i2c_read_Xbit_LE(BME_688_PRES_CALIB2_REG, &par_p16[1], 16) &&
+          sensorHub.i2c_readByte(BME_688_PRES_CALIB3_REG, &par_p8[0], 1) &&
+          sensorHub.i2c_read_Xbit_LE(BME_688_PRES_CALIB4_REG, &par_p16[2], 16) &&
+          sensorHub.i2c_read_Xbit_LE(BME_688_PRES_CALIB5_REG, &par_p16[3], 16) &&
+          sensorHub.i2c_readByte(BME_688_PRES_CALIB6_REG, &par_p8[1], 1) &&
+          sensorHub.i2c_readByte(BME_688_PRES_CALIB7_REG, &par_p8[2], 1) &&
+          sensorHub.i2c_read_Xbit_LE(BME_688_PRES_CALIB8_REG, &par_p16[4], 16) &&
+          sensorHub.i2c_read_Xbit_LE(BME_688_PRES_CALIB9_REG, &par_p16[5], 16) &&
+          sensorHub.i2c_readByte(BME_688_PRES_CALIB10_REG, &par_p10, 1)))
         printLog(BME_688_PRES_CAL_EXCEPT);
 
-    if (!(i2c_read_Xbit_LE(bme688, BME_688_HUM_CALIB1_REG, &par_h16[0], 12) &&
-          i2c_read_Xbit(bme688, BME_688_HUM_CALIB2_REG, &par_h16[1], 12) &&
-          i2c_readByte(bme688, BME_688_HUM_CALIB3_REG, &par_h8[0], 1) &&
-          i2c_readByte(bme688, BME_688_HUM_CALIB4_REG, &par_h8[1], 1) &&
-          i2c_readByte(bme688, BME_688_HUM_CALIB5_REG, &par_h8[2], 1) &&
-          i2c_readByte(bme688, BME_688_HUM_CALIB6_REG, &par_h6, 1) &&
-          i2c_readByte(bme688, BME_688_HUM_CALIB7_REG, &par_h8[4], 1)))
+    if (!(sensorHub.i2c_read_Xbit_LE(BME_688_HUM_CALIB1_REG, &par_h16[0], 12) &&
+          sensorHub.i2c_read_Xbit(BME_688_HUM_CALIB2_REG, &par_h16[1], 12) &&
+          sensorHub.i2c_readByte(BME_688_HUM_CALIB3_REG, &par_h8[0], 1) &&
+          sensorHub.i2c_readByte(BME_688_HUM_CALIB4_REG, &par_h8[1], 1) &&
+          sensorHub.i2c_readByte(BME_688_HUM_CALIB5_REG, &par_h8[2], 1) &&
+          sensorHub.i2c_readByte(BME_688_HUM_CALIB6_REG, &par_h6, 1) &&
+          sensorHub.i2c_readByte(BME_688_HUM_CALIB7_REG, &par_h8[4], 1)))
         printLog(BME_688_HUM_CAL_EXCEPT);
 
-    if (!(i2c_readByte(bme688, BME_688_GAS_CALIB1_REG, &par_g1, 1) &&
-          i2c_read_Xbit_LE(bme688, BME_688_GAS_CALIB2_REG, &par_g2, 16) &&
-          i2c_readByte(bme688, BME_688_GAS_CALIB3_REG, &par_g3, 1) &&
-          i2c_readByte(bme688, BME_688_GAS_HEAT_RANGE_REG, &res_heat_range, 1) &&
-          i2c_readByte(bme688, BME_688_GAS_HEAT_VAL_REG, &res_heat_val, 1)))
+    if (!(sensorHub.i2c_readByte(BME_688_GAS_CALIB1_REG, &par_g1, 1) &&
+          sensorHub.i2c_read_Xbit_LE(BME_688_GAS_CALIB2_REG, &par_g2, 16) &&
+          sensorHub.i2c_readByte(BME_688_GAS_CALIB3_REG, &par_g3, 1) &&
+          sensorHub.i2c_readByte(BME_688_GAS_HEAT_RANGE_REG, &res_heat_range, 1) &&
+          sensorHub.i2c_readByte(BME_688_GAS_HEAT_VAL_REG, &res_heat_val, 1)))
         printLog(BME_688_TEMP_CAL_EXCEPT);
 
     setHeatProfiles();
@@ -125,8 +125,8 @@ bool BME688::setHeatProfiles()
     {
         yield();
         uint8_t gasTemp = readUCGas(BME_688_GAS_START_TEMP + i * 25);
-        i2c_execute(bme688, BME_688_GAS_WAIT_PROFILE_REG + i, BME_688_GAS_WAIT_MULFAC1 << 6 | (uint8_t)(0.25 * gasTemp - 22));
-        i2c_execute(bme688, BME_688_GAS_RES_HEAT_PROFILE_REG + i, gasTemp);
+        sensorHub.i2c_execute(BME_688_GAS_WAIT_PROFILE_REG + i, BME_688_GAS_WAIT_MULFAC1 << 6 | (uint8_t)(0.25 * gasTemp - 22));
+        sensorHub.i2c_execute(BME_688_GAS_RES_HEAT_PROFILE_REG + i, gasTemp);
     }
     return true;
 }
@@ -134,7 +134,7 @@ bool BME688::setHeatProfiles()
 bool BME688::isConnected()
 {
     uint8_t pid = 0;
-    if (is_sensor_connected(bme688) && i2c_readByte(bme688, BME_688_CHIP_ID_REG, &pid, 1))
+    if (sensorHub.is_sensor_connected() && sensorHub.i2c_readByte(BME_688_CHIP_ID_REG, &pid, 1))
         return pid == BME_688_CHIP_ID;
     return false;
 }
@@ -154,7 +154,7 @@ bool BME688::setTemperatureOversampling(uint8_t oss)
 int32_t BME688::readRawTemp()
 {
     int32_t raw = 0;
-    if (!i2c_read_Xbit(bme688, BME_688_TEMP_RAW_REG, &raw, 20))
+    if (!sensorHub.i2c_read_Xbit(BME_688_TEMP_RAW_REG, &raw, 20))
         printLog(BME_688_READ_FAILURE);
     return raw;
 }
@@ -162,7 +162,7 @@ int32_t BME688::readRawTemp()
 int32_t BME688::readRawPres()
 {
     int32_t raw = 0;
-    if (!i2c_read_Xbit(bme688, BME_688_PRES_RAW_REG, &raw, 20))
+    if (!sensorHub.i2c_read_Xbit(BME_688_PRES_RAW_REG, &raw, 20))
         printLog(BME_688_READ_FAILURE);
     return raw;
 }
@@ -170,7 +170,7 @@ int32_t BME688::readRawPres()
 int16_t BME688::readRawHum()
 {
     int16_t raw = 0;
-    if (!i2c_read_Xbit(bme688, BME_688_HUM_RAW_REG, &raw, 16))
+    if (!sensorHub.i2c_read_Xbit(BME_688_HUM_RAW_REG, &raw, 16))
         printLog(BME_688_READ_FAILURE);
     return raw;
 }
@@ -178,7 +178,7 @@ int16_t BME688::readRawHum()
 int16_t BME688::readRawGas()
 {
     int16_t raw = 0;
-    if (!i2c_read_Xbit(bme688, BME_688_HUM_RAW_REG, &raw, 16))
+    if (!sensorHub.i2c_read_Xbit(BME_688_HUM_RAW_REG, &raw, 16))
         printLog(BME_688_READ_FAILURE);
     return raw;
 }
@@ -246,29 +246,29 @@ uint8_t BME688::readUCGas(uint16_t target_temp)
 bool BME688::checkGasMeasurementCompletion()
 {
     uint8_t m_Complete = 0;
-    i2c_readByte(bme688, BME_688_GAS_MEAS_STATUS_REG1, &m_Complete, 1);
+    sensorHub.i2c_readByte(BME_688_GAS_MEAS_STATUS_REG1, &m_Complete, 1);
     m_Complete &= BME_688_GAS_HEAT_STAB_MASK | BME_688_GAS_VALID_REG_MASK;
     return m_Complete == BME_688_GAS_MEAS_FINISH;
 }
 
 double BME688::readTemperature()
 {
-    i2c_execute(bme688, BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
+    sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
     delay(10);
     return readUCTemp(readRawTemp());
 }
 
 double BME688::readPressure()
 {
-    i2c_execute(bme688, BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
+    sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
     delay(10);
     return readUCPres(readRawPres());
 }
 
 double BME688::readHumidity()
 {
-    i2c_execute(bme688, BME_688_CTRL_MEAS_HUM_REG, hum_oss);
-    i2c_execute(bme688, BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
+    sensorHub.i2c_execute(BME_688_CTRL_MEAS_HUM_REG, hum_oss);
+    sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
     delay(10);
     return readUCHum(readRawHum());
 }
@@ -281,9 +281,9 @@ double BME688::readGasForTemperature(uint16_t temperature)
         {
             uint8_t t_temp = readUCGas((uint16_t)temperature);
             uint8_t t_wait = (uint8_t)(0.25 * t_temp - 17);
-            i2c_execute(bme688, BME_688_CTRL_GAS_REG, 0x20);
-            i2c_execute(bme688, BME_688_GAS_WAIT_PROFILE_REG, t_wait);
-            i2c_execute(bme688, BME_688_GAS_RES_HEAT_PROFILE_REG, t_temp);
+            sensorHub.i2c_execute(BME_688_CTRL_GAS_REG, 0x20);
+            sensorHub.i2c_execute(BME_688_GAS_WAIT_PROFILE_REG, t_wait);
+            sensorHub.i2c_execute(BME_688_GAS_RES_HEAT_PROFILE_REG, t_temp);
             return startGasMeasurement(BME_688_GAS_PROFILE_START, t_wait + 5);
         }
         else
@@ -306,8 +306,8 @@ double BME688::readGas(uint8_t profile)
 
 double BME688::startGasMeasurement(uint8_t profile, uint8_t waitTime)
 {
-    i2c_execute(bme688, BME_688_CTRL_GAS_REG, BME_688_GAS_RUN | profile);
-    i2c_execute(bme688, BME_688_CTRL_MEAS_REG, mode);
+    sensorHub.i2c_execute(BME_688_CTRL_GAS_REG, BME_688_GAS_RUN | profile);
+    sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, mode);
     delay(waitTime);
     if (!checkGasMeasurementCompletion())
     {
@@ -317,8 +317,8 @@ double BME688::startGasMeasurement(uint8_t profile, uint8_t waitTime)
     uint16_t gas_adc = 0;
     uint8_t gas_range = 0;
 
-    i2c_read_Xbit(bme688, BME_688_GAS_ADC_REG, &gas_adc, 10);
-    i2c_readByte(bme688, BME_688_GAS_RANGE_REG, &gas_range, 1);
+    sensorHub.i2c_read_Xbit(BME_688_GAS_ADC_REG, &gas_adc, 10);
+    sensorHub.i2c_readByte(BME_688_GAS_RANGE_REG, &gas_range, 1);
 
     gas_range &= BME_688_GAS_RANGE_VAL_MASK;
 

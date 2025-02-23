@@ -5,23 +5,23 @@
  * Parent class for all sensors
  */
 
-SensorHub::SensorHub()
+SensorHub::SensorHub(uint8_t addr) : ADDR(addr)
 {
     Wire.begin();
 }
 
-void SensorHub::i2c_execute(uint8_t address, uint8_t reg, uint8_t data)
+void SensorHub::i2c_execute(uint8_t reg, uint8_t data)
 {
-    Wire.beginTransmission(address);
+    Wire.beginTransmission(ADDR);
     Wire.write(reg);
     Wire.write(data);
     Wire.endTransmission(true);
 }
 
-bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, uint8_t * const data, uint8_t length)
+bool SensorHub::i2c_readByte(uint8_t reg, uint8_t *const data, uint8_t length)
 {
-    startTransmission(addr, reg);
-    Wire.requestFrom(addr, length);
+    startTransmission(reg);
+    Wire.requestFrom(ADDR, length);
     if (Wire.available() < length)
         return false;
     for (uint8_t i = 0; i < length; i++)
@@ -29,10 +29,10 @@ bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, uint8_t * const data, ui
     return true;
 }
 
-bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, int8_t * const data, uint8_t length)
+bool SensorHub::i2c_readByte(uint8_t reg, int8_t *const data, uint8_t length)
 {
-    startTransmission(addr, reg);
-    Wire.requestFrom(addr, length);
+    startTransmission(reg);
+    Wire.requestFrom(ADDR, length);
     if (Wire.available() < length)
         return false;
     for (uint8_t i = 0; i < length; i++)
@@ -40,16 +40,16 @@ bool SensorHub::i2c_readByte(uint8_t addr, uint8_t reg, int8_t * const data, uin
     return true;
 }
 
-void SensorHub::startTransmission(uint8_t addr, uint8_t reg)
+void SensorHub::startTransmission(uint8_t reg)
 {
-    Wire.beginTransmission(addr);
+    Wire.beginTransmission(ADDR);
     Wire.write(reg);
     Wire.endTransmission(false);
 }
 
-bool SensorHub::is_sensor_connected(uint8_t address)
+bool SensorHub::is_sensor_connected()
 {
-    Wire.beginTransmission(address);
+    Wire.beginTransmission(ADDR);
     return (Wire.endTransmission() == 0);
 }
 

@@ -7,7 +7,7 @@
 
 #ifdef __cplusplus
 
-class BME688 : private SensorHub
+class BME688
 {
 public:
     BME688();
@@ -51,11 +51,11 @@ public:
     // int setGasHeaterTemperature();
     // ~BME688();
 
-    bool isConnected() override;
+    bool isConnected();
 
 private:
-    uint8_t bme688 = BME688_I2C_ADDR_PRIMARY,
-            temp_oss = BME_688_OSS_1,
+    SensorHub sensorHub;
+    uint8_t temp_oss = BME_688_OSS_1,
             press_oss = BME_688_OSS_1,
             hum_oss = BME_688_OSS_1,
             mode = BME_688_FORCED_MODE;
@@ -108,7 +108,7 @@ private:
     double startGasMeasurement(uint8_t profile, uint8_t waitTime);
     bool setHeatProfiles();
     bool checkGasMeasurementCompletion();
-    void printLog(String log) override;
+    void printLog(String log);
     void readCalibParams();
 };
 
