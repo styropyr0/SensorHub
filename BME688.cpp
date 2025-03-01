@@ -3,9 +3,7 @@
 #include "SensorHubTemplates.h"
 #include <Wire.h>
 
-BME688::BME688() : sensorHub(BME688_I2C_ADDR_PRIMARY)
-{
-}
+BME688::BME688() : sensorHub(BME688_I2C_ADDR_PRIMARY) {}
 
 bool BME688::begin()
 {
