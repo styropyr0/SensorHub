@@ -68,9 +68,7 @@ bool ML8511::calibrateSensor(float UV0_voltage, float UV10_voltage, float UV15_v
 
 bool ML8511::checkApproxEquality(float a, float b, float fac)
 {
-    if (a <= (int)b + fac / 2 && a >= (int)b - fac / 2)
-        return true;
-    return false;
+    return (a <= (int)b + fac / 2) && (a >= (int)b - fac / 2);
 }
 
 void ML8511::setActiveUnit(uint8_t unit)
