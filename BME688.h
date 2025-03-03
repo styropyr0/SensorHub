@@ -61,21 +61,6 @@ private:
             mode = BME_688_FORCED_MODE;
 
     bool printLogs = true;
-    // iir_filter = 0,
-    // gas_heater = 0,
-    // gas_heater_temperature = 0,
-    // gas_heater_duration = 0,
-    // profile = 0,
-    // power_mode = 0,
-    // forced_mode = 0,
-    // normal_mode = 0,
-    // sleep_mode = 0,
-    // gas_status = 0,
-    // new_data = 0,
-    // gas_heater_profile = 0,
-    // gas_heater_enable = 0,
-    // gas_heater_disable = 0,
-    // gas_heater_status = 0;
 
     // CALIBRATION CONSTANTS
     int16_t par_t16[2] = {0};
