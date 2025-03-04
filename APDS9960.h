@@ -7,6 +7,9 @@
 
 #ifdef __cplusplus
 
+struct Color;
+struct Gesture;
+
 /**
  * @brief APDS9960 Color, Proximity, and Gesture sensor.
  * @author Saurav Sajeev
@@ -26,18 +29,40 @@ public:
     void enableWaitTimer(bool state, uint8_t waitTime, bool WLONG);
     void enableProximityInterrupt(bool state);
     void enableLightInterrupt(bool state);
-    void setSensitivity(uint8_t shutterSpeed);
+    void enableGestureInterrupt(bool state);
+    void setLightSensitivity(uint8_t shutterSpeed);
+    void setLightGain(uint8_t gainFactor);
+    void setProximitySensorRange(uint8_t level);
     uint8_t readProximity();
     void correctProximity(int8_t upRight, int8_t downLeft);
     void setLightSensingInterruptThreshold(uint16_t low, uint16_t high);
     void setProximitySensingInterruptThreshold(uint8_t low, uint8_t high);
     void setPersistence(uint8_t light, uint8_t proximity);
+    void setProximitySensitivity(uint8_t sensitivity);
+    Color readColorData();
+    void setGestureSensitivity(uint8_t pulseLength, uint8_t pulseCount);
+    void setGestureGain(uint8_t factor);
+    void setGestureDetectorMode(uint8_t mode);
+    Gesture readGesture();
+    String resolveGesture(Gesture gesture, uint8_t threshold);
 
 private:
     SensorHub sensorHub;
-    uint8_t setupByte = 0x01;
+    uint8_t setupByte = 0x01, ctrl = 0x00, gesCtrl = 0x00;
 
     bool isConnected();
+};
+
+struct Color
+{
+public:
+    uint16_t red, green, blue, clear;
+};
+
+struct Gesture
+{
+public:
+    uint8_t up, down, left, right;
 };
 
 #endif

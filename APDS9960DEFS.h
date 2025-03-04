@@ -35,6 +35,12 @@
 #define APDS_AIL_INT_MASK 0x10
 #define APDS_PIL_INT_MASK 0x20
 #define APDS_GES_MASK 0x40
+#define APDS_CONFIG_2_MASK 0x01
+#define APDS_CTRL_LED_CURR_MASK 0xC0
+#define APDS_CTRL_PGAIN_MASK 0x0C
+#define APDS_CTRL_AGAIN_MASK 0x03
+#define APDS_GGAIN_MASK 0x60
+#define APDS_GLED_DRIVE_MASK 0x18
 
 // Status registers
 #define APDS_DEV_STATUS_REG 0x93
@@ -55,8 +61,9 @@
 
 // Configuration registers
 #define APDS_CONFIG_REG_1 0x8D
-#define APDS_CONFIG_REG_2 0x8F
+#define APDS_CONFIG_REG_2 0x90
 #define APDS_CONFIG_REG_3 0x9F
+#define APDS_CTRL_REG 0x8F
 
 // Light Sensor data registers
 #define APDS_CDATA_REG_L 0x94
@@ -93,6 +100,12 @@
 #define APDS_GOFFSET_LEFT_REG 0xA7
 #define APDS_GOFFSET_RIGHT_REG 0xA9
 #define APDS_GPLNC_REG 0xA6
+
+// Gesture reciever pair combo
+#define APDS_GES_ACTIVE_ALL 0x00
+#define APDS_GES_ACTIVE_UPDOWN 0x01
+#define APDS_GES_ACTIVE_LEFTRIGHT 0x02
+#define APDS_GES_INACTIVE 0x03
 
 #endif // __cplusplus
 #endif // APDSDEFS
