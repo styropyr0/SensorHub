@@ -6,6 +6,8 @@ bool APDS9960::begin()
 {
     if (isConnected())
         sensorHub.i2c_execute(APDS_ENABLE_REG, setupByte);
+    else
+        printLog(APDS_CHECK_CONN_ERR);
     return isConnected();
 }
 
@@ -17,6 +19,8 @@ bool APDS9960::beginAll()
         enableAllInterrupts(true);
         sensorHub.i2c_execute(APDS_ENABLE_REG, setupByte);
     }
+    else
+        printLog(APDS_CHECK_CONN_ERR);
     return isConnected();
 }
 
@@ -95,7 +99,8 @@ void APDS9960::setLightSensitivity(uint8_t shutterSpeed)
 uint8_t APDS9960::readProximity()
 {
     uint8_t pData = 0;
-    sensorHub.i2c_readByte(APDS_PDATA_REG, &pData, 1);
+    if (!sensorHub.i2c_readByte(APDS_PDATA_REG, &pData, 1))
+        printLog(APDS_READ_FAILURE);
     return pData;
 }
 
@@ -122,14 +127,20 @@ void APDS9960::setProximitySensingInterruptThreshold(uint8_t low, uint8_t high)
 void APDS9960::setPersistence(uint8_t light, uint8_t proximity)
 {
     if (light > 15 || proximity > 15)
+    {
+        printLog(APDS_VALUE_INVALID);
         return;
+    }
     sensorHub.i2c_execute(APDS_PERS_REG, light << 4 | proximity);
 }
 
 void APDS9960::setProximitySensitivity(uint8_t sensitivity)
 {
     if (sensitivity > 3)
+    {
+        printLog(APDS_VALUE_INVALID);
         return;
+    }
     sensorHub.i2c_execute(APDS_CONFIG_REG_2, APDS_CONFIG_2_MASK | sensitivity << 4);
     ctrl = (ctrl & ~APDS_CTRL_PGAIN_MASK) | sensitivity << 2;
     sensorHub.i2c_execute(APDS_CTRL_REG, ctrl);
@@ -138,7 +149,10 @@ void APDS9960::setProximitySensitivity(uint8_t sensitivity)
 void APDS9960::setProximitySensorRange(uint8_t level)
 {
     if (level > 3)
+    {
+        printLog(APDS_VALUE_INVALID);
         return;
+    }
     ctrl = (ctrl & ~APDS_CTRL_LED_CURR_MASK) | level << 6;
     sensorHub.i2c_execute(APDS_CTRL_REG, ctrl);
 }
@@ -146,7 +160,10 @@ void APDS9960::setProximitySensorRange(uint8_t level)
 void APDS9960::setLightGain(uint8_t gainFactor)
 {
     if (gainFactor > 3)
+    {
+        printLog(APDS_VALUE_INVALID);
         return;
+    }
     ctrl = (ctrl & ~APDS_CTRL_AGAIN_MASK) | gainFactor;
     sensorHub.i2c_execute(APDS_CTRL_REG, ctrl);
 }
@@ -154,17 +171,22 @@ void APDS9960::setLightGain(uint8_t gainFactor)
 Color APDS9960::readColorData()
 {
     Color color;
-    sensorHub.i2c_read_Xbit_LE(APDS_CDATA_REG_L, &(color.clear), 16);
-    sensorHub.i2c_read_Xbit_LE(APDS_RDATA_REG_L, &(color.red), 16);
-    sensorHub.i2c_read_Xbit_LE(APDS_GDATA_REG_L, &(color.green), 16);
-    sensorHub.i2c_read_Xbit_LE(APDS_BDATA_REG_L, &(color.blue), 16);
+    if (
+        !(sensorHub.i2c_read_Xbit_LE(APDS_CDATA_REG_L, &(color.clear), 16) &&
+          sensorHub.i2c_read_Xbit_LE(APDS_RDATA_REG_L, &(color.red), 16) &&
+          sensorHub.i2c_read_Xbit_LE(APDS_GDATA_REG_L, &(color.green), 16) &&
+          sensorHub.i2c_read_Xbit_LE(APDS_BDATA_REG_L, &(color.blue), 16)))
+        printLog(APDS_READ_FAILURE);
     return color;
 }
 
 void APDS9960::setGestureGain(uint8_t gainFactor)
 {
     if (gainFactor > 3)
+    {
+        printLog(APDS_VALUE_INVALID);
         return;
+    }
     gesCtrl = (gesCtrl & ~APDS_GGAIN_MASK) | gainFactor << 5;
     gainFactor = 3 - gainFactor;
     gesCtrl = (gesCtrl & ~APDS_GLED_DRIVE_MASK) | gainFactor << 3;
@@ -174,14 +196,20 @@ void APDS9960::setGestureGain(uint8_t gainFactor)
 void APDS9960::setGestureSensitivity(uint8_t pulseLength, uint8_t pulseCount)
 {
     if (pulseLength > 3 || pulseCount > 63)
+    {
+        printLog(APDS_VALUE_INVALID);
         return;
+    }
     sensorHub.i2c_execute(APDS_GPLNC_REG, pulseLength << 6 | pulseCount);
 }
 
 void APDS9960::setGestureDetectorMode(uint8_t mode)
 {
     if (mode > 3)
+    {
+        printLog(APDS_VALUE_INVALID);
         return;
+    }
     sensorHub.i2c_execute(APDS_GCONFIG_REG_3, mode);
 }
 
@@ -193,10 +221,12 @@ void APDS9960::enableGestureInterrupt(bool state)
 Gesture APDS9960::readGesture()
 {
     Gesture gesture;
-    sensorHub.i2c_readByte(APDS_GFIFO_REG_UP, &(gesture.up), 1);
-    sensorHub.i2c_readByte(APDS_GFIFO_REG_DOWN, &(gesture.down), 1);
-    sensorHub.i2c_readByte(APDS_GFIFO_REG_LEFT, &(gesture.left), 1);
-    sensorHub.i2c_readByte(APDS_GFIFO_REG_RIGHT, &(gesture.right), 1);
+    if (
+        !(sensorHub.i2c_readByte(APDS_GFIFO_REG_UP, &(gesture.up), 1) &&
+          sensorHub.i2c_readByte(APDS_GFIFO_REG_DOWN, &(gesture.down), 1) &&
+          sensorHub.i2c_readByte(APDS_GFIFO_REG_LEFT, &(gesture.left), 1) &&
+          sensorHub.i2c_readByte(APDS_GFIFO_REG_RIGHT, &(gesture.right), 1)))
+        printLog(APDS_READ_FAILURE);
     return gesture;
 }
 
@@ -236,4 +266,10 @@ String APDS9960::resolveGesture(Gesture gesture, uint8_t threshold)
     }
 
     return secondary.isEmpty() ? primary : primary + " + " + secondary;
+}
+
+void APDS9960::printLog(String log)
+{
+    if (printLogs)
+        Serial.println(log);
 }

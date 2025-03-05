@@ -107,5 +107,11 @@
 #define APDS_GES_ACTIVE_LEFTRIGHT 0x02
 #define APDS_GES_INACTIVE 0x03
 
+// ------------ ERRORS -----------------
+
+#define APDS_CHECK_CONN_ERR "APDS9960 is disconnected. Check connections or make sure it is working."
+#define APDS_READ_FAILURE "Exception: Failed to read from BME688"
+#define APDS_VALUE_INVALID "Invalid value. Use a value within the range."
+
 #endif // __cplusplus
 #endif // APDSDEFS
