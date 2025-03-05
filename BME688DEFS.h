@@ -94,7 +94,7 @@
 #define BME_688_HEAT_RANGE_MASK 0x18
 #define BME_688_GAS_RANGE_REG_MASK 0x0F
 #define BME_688_GAS_MEAS_INDEX_MASK 0x0F
-#define BME_688_GAS_RANGE_VAL_MASK 0x07
+#define BME_688_GAS_RANGE_VAL_MASK 0x0F
 #define BME_688_GAS_RUN 0x20
 
 #define BME_688_GAS_MEAS_FINISH 0x30
@@ -152,7 +152,7 @@
 #define BME_688_HUM_CAL_EXCEPT "Exception: Failed to read humidity calibration parameters"
 #define BME_688_VALUE_INVALID "Invalid value. Use a value within the range."
 #define BME_688_READ_FAILURE "Exception: Failed to read from BME688"
-#define BME_688_GAS_MEAS_FAILURE "Exception: Gas measurement incomplete. Heating might be too high for the provided wait time."
+#define BME_688_GAS_MEAS_FAILURE "Exception: Gas measurement incomplete.\nTemperature not achieved or heating might be too high for the provided wait time."
 #define BME_688_TEMP_WARNING "Warning: Higher temperatures will degrade the lifespan of the sensor. \nThis operation has been automatically denied for safety. \nIf you still wish to use high temperatures, call ignoreUnsafeTemperatureWarnings(false)\nIn safe mode, Temperature limit is 425°C. Bypassing this protection will raise the limit to 600°C."
 #define BME_688_TEMP_EXCEED_MAX_LIMIT "Exception: Operation blocked. The temperature value exceeds maximum limit."
 #define BME_688_PROFILE_OUT_OF_RANGE "Exception: Operation blocked. Profile value should be between 0 and 9."

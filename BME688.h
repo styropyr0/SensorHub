@@ -7,50 +7,114 @@
 
 #ifdef __cplusplus
 
+/**
+ * @class BME688
+ * @brief A driver class for interfacing with the BME688 sensor.
+ *
+ * This class provides functions to read temperature, pressure, humidity, and gas resistance
+ * from the Bosch BME688 environmental sensor. It supports different oversampling settings
+ * and operation modes.
+ * 
+ * @author Saurav Sajeev
+ */
 class BME688
 {
 public:
+    /**
+     * @brief Default constructor for BME688.
+     */
     BME688();
-    ~BME688();
-    bool begin();
-    bool begin(uint8_t mode);
-    bool begin(uint8_t mode, uint8_t oss);
-    double readTemperature();
-    double readPressure();
-    double readHumidity();
-    double readGasForTemperature(uint16_t temperature);
-    double readGas(uint8_t profile);
-    void showLogs(bool show);
-    bool setTemperatureOversampling(uint8_t oss);
-    bool setPressureOversampling(uint8_t oss);
-    bool setHumidityOversampling(uint8_t oss);
-    void ignoreUnsafeTemperatureWarnings(bool ignore);
-    // int readPressure();
-    // int readHumidity();
-    // int readGas();
-    // int readAltitude();
-    // int readAll();
-    // int setPressureOversampling();
-    // int setHumidityOversampling();
-    // int setIIRFilter();
-    // int setGasHeater();
-    // int setGasHeaterTemperature();
-    // int setGasHeaterDuration();
-    // int setProfile();
-    // int setPowerMode();
-    // int setForcedMode();
-    // int setNormalMode();
-    // int setSleepMode();
-    // int setGasStatus();
-    // int setNewData();
-    // int setGasHeaterProfile();
-    // int setGasHeaterEnable();
-    // int setGasHeaterDisable();
-    // int setGasHeaterStatus();
-    // int setGasHeaterDuration();
-    // int setGasHeaterTemperature();
-    // ~BME688();
 
+    /**
+     * @brief Initializes the BME688 sensor with default settings.
+     * @return True if the sensor is successfully initialized, false otherwise.
+     */
+    bool begin();
+
+    /**
+     * @brief Initializes the BME688 sensor with a specific operation mode.
+     * @param mode The operating mode for the sensor.
+     * @return True if initialization is successful, false otherwise.
+     */
+    bool begin(uint8_t mode);
+
+    /**
+     * @brief Initializes the BME688 sensor with a specific mode and oversampling settings.
+     * @param mode The operating mode.
+     * @param oss The oversampling setting.
+     * @return True if initialization is successful, false otherwise.
+     */
+    bool begin(uint8_t mode, uint8_t oss);
+
+    /**
+     * @brief Reads the current temperature from the sensor.
+     * @return Temperature in degrees Celsius.
+     */
+    double readTemperature();
+
+    /**
+     * @brief Reads the current atmospheric pressure.
+     * @return Pressure in Pascals (Pa).
+     */
+    double readPressure();
+
+    /**
+     * @brief Reads the relative humidity from the sensor.
+     * @return Humidity as a percentage (%).
+     */
+    double readHumidity();
+
+    /**
+     * @brief Reads gas resistance for a given target temperature.
+     * @param temperature The target temperature in degrees Celsius.
+     * @return Gas resistance in ohms (Ω).
+     */
+    double readGasForTemperature(uint16_t temperature);
+
+    /**
+     * @brief Reads gas resistance for a specific gas profile.
+     * @param profile The gas measurement profile index.
+     * @return Gas resistance in ohms (Ω).
+     */
+    double readGas(uint8_t profile);
+
+    /**
+     * @brief Enables or disables logging for debugging purposes.
+     * @param show Set to true to enable logs, false to disable.
+     */
+    void showLogs(bool show);
+
+    /**
+     * @brief Sets the temperature oversampling setting.
+     * @param oss Oversampling setting value.
+     * @return True if the setting was applied successfully, false otherwise.
+     */
+    bool setTemperatureOversampling(uint8_t oss);
+
+    /**
+     * @brief Sets the pressure oversampling setting.
+     * @param oss Oversampling setting value.
+     * @return True if the setting was applied successfully, false otherwise.
+     */
+    bool setPressureOversampling(uint8_t oss);
+
+    /**
+     * @brief Sets the humidity oversampling setting.
+     * @param oss Oversampling setting value.
+     * @return True if the setting was applied successfully, false otherwise.
+     */
+    bool setHumidityOversampling(uint8_t oss);
+
+    /**
+     * @brief Allows ignoring unsafe temperature warnings.
+     * @param ignore Set to true to ignore warnings, false to keep them.
+     */
+    void ignoreUnsafeTemperatureWarnings(bool ignore);
+
+    /**
+     * @brief Checks if the sensor is connected and responding.
+     * @return True if the sensor is connected, false otherwise.
+     */
     bool isConnected();
 
 private:

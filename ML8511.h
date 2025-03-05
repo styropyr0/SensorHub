@@ -7,8 +7,13 @@
 #ifdef __cplusplus
 
 /**
- * @brief ML8511 Sensor class.
- * Read UV Intensity and UV Index from the sensor, with configurable units.
+ * @class ML8511
+ * @brief Driver class for the ML8511 UV sensor.
+ *
+ * This class provides an interface for the ML8511 sensor, enabling the measurement
+ * of ultraviolet (UV) intensity and calculation of the UV index. It supports
+ * configurable units and provides accurate readings for UV exposure monitoring.
+ *
  * @author Saurav Sajeev
  */
 class ML8511

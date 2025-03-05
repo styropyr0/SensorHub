@@ -6,7 +6,15 @@
 #ifdef __cplusplus
 
 /**
- * @brief Sensor Hub class.
+ * @class SensorHub
+ * @brief Core communication and data processing hub for I2C-based sensors.
+ *
+ * The SensorHub class serves as a foundational interface for sensor communication,
+ * providing essential I2C read and write operations. It enables seamless integration
+ * with various sensor classes that rely on it for data acquisition and processing.
+ * It supports multi-byte transactions, configurable communication modes, and device
+ * connectivity verification.
+ *
  * @author Saurav Sajeev
  */
 class SensorHub
@@ -47,22 +55,22 @@ public:
     bool i2c_readByte(uint8_t reg, int8_t *const data, uint8_t length);
 
     /**
-     * @brief Reads a little-endian multi-byte value from a specified register.
+     * @brief Reads a little-endian multi-bit value from a specified register.
      * @tparam T The data type to read (e.g., uint16_t, uint32_t).
      * @param reg The register address to read from.
      * @param data Pointer to store the read data.
-     * @param length Number of bytes to read.
+     * @param length Number of bits to read.
      * @returns True if the read operation was successful, false otherwise.
      */
     template <typename T>
     bool i2c_read_Xbit_LE(uint8_t reg, T *const data, uint8_t length);
 
     /**
-     * @brief Reads a multi-byte value from a specified register.
+     * @brief Reads a big-endian multi-bit value from a specified register.
      * @tparam T The data type to read (e.g., uint16_t, uint32_t).
      * @param reg The register address to read from.
      * @param data Pointer to store the read data.
-     * @param length Number of bytes to read.
+     * @param length Number of bits to read.
      * @returns True if the read operation was successful, false otherwise.
      */
     template <typename T>

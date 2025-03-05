@@ -11,194 +11,203 @@ struct Color;
 struct Gesture;
 
 /**
- * @brief APDS9960 Color, Proximity, and Gesture sensor.
+ * @class APDS9960
+ * @brief Driver class for the APDS9960 sensor.
+ *
+ * This class provides an interface for the APDS9960 sensor, which supports
+ * color sensing, proximity detection, ambient light measurement, and gesture recognition.
+ * It allows users to configure the sensor and retrieve processed sensor data.
+ *
  * @author Saurav Sajeev
  */
 class APDS9960
 {
 public:
+    /**
+     * @brief Constructs an APDS9960 object using the default I2C address.
+     */
     APDS9960();
 
     /**
-     * @brief Prepare the sensor for measurements.
-     * @returns The setup status. If false, the sensor configuration has failed.
+     * @brief Initializes the sensor with the default setup.
+     * @returns True if initialization is successful, false otherwise.
      */
     bool begin();
 
     /**
-     * @brief Prepare the sensor for measurements and enable all three sensing modes.
-     * @returns The setup status. If false, the sensor configuration has failed.
+     * @brief Initializes the sensor and enables all sensing and interrupt features.
+     * @returns True if initialization is successful, false otherwise.
      */
     bool beginAll();
 
     /**
-     * @brief Gets the PID of the sensor.
-     * @returns The PID of the sensor.
+     * @brief Retrieves the product ID of the APDS9960 sensor.
+     * @returns The product ID.
      */
     uint8_t getPID();
 
     /**
-     * @brief Enables or disables all sensor-related interrupts.
-     * @param state True to enable, false to disable.
-     */
-    void enableAllInterrupts(bool state);
-
-    /**
-     * @brief Enables or disables all sensing functionalities.
+     * @brief Enables or disables all sensing features (light, proximity, gesture).
      * @param state True to enable, false to disable.
      */
     void enableAllSensors(bool state);
 
     /**
-     * @brief Enables or disables gesture sensing mode.
+     * @brief Enables or disables all interrupts (light and proximity).
      * @param state True to enable, false to disable.
      */
-    void enableGestureSensing(bool state);
+    void enableAllInterrupts(bool state);
 
     /**
-     * @brief Enables or disables proximity sensing mode.
-     * @param state True to enable, false to disable.
-     */
-    void enableProximitySensing(bool state);
-
-    /**
-     * @brief Enables or disables ambient light and color sensing mode.
+     * @brief Enables or disables ambient light sensing.
      * @param state True to enable, false to disable.
      */
     void enableLightSensing(bool state);
 
     /**
-     * @brief Enables or disables the wait timer.
-     * @param state True to enable, false to disable.
-     * @param waitTime Wait time in clock cycles.
-     * @param WLONG True for extended wait time, false for normal wait time.
-     */
-    void enableWaitTimer(bool state, uint8_t waitTime, bool WLONG);
-
-    /**
-     * @brief Enables or disables the proximity sensor interrupt.
+     * @brief Enables or disables proximity sensing.
      * @param state True to enable, false to disable.
      */
-    void enableProximityInterrupt(bool state);
+    void enableProximitySensing(bool state);
 
     /**
-     * @brief Enables or disables the ambient light sensor interrupt.
+     * @brief Enables or disables gesture sensing.
+     * @param state True to enable, false to disable.
+     */
+    void enableGestureSensing(bool state);
+
+    /**
+     * @brief Enables or disables ambient light sensing interrupt.
      * @param state True to enable, false to disable.
      */
     void enableLightInterrupt(bool state);
 
     /**
-     * @brief Enables or disables the gesture sensing interrupt.
+     * @brief Enables or disables proximity sensing interrupt.
      * @param state True to enable, false to disable.
      */
-    void enableGestureInterrupt(bool state);
+    void enableProximityInterrupt(bool state);
 
     /**
-     * @brief Sets the sensitivity of the light sensor.
-     * @param shutterSpeed The integration time for light sensing.
+     * @brief Enables or disables the wait timer.
+     * @param state True to enable, false to disable.
+     * @param waitTime The wait time value.
+     * @param WLONG True for long wait time, false for default.
+     */
+    void enableWaitTimer(bool state, uint8_t waitTime, bool WLONG);
+
+    /**
+     * @brief Checks if the APDS9960 sensor is connected and responding.
+     * @returns True if the sensor is detected, false otherwise.
+     */
+    bool isConnected();
+
+    /**
+     * @brief Sets the light sensor sensitivity by adjusting the shutter speed.
+     * @param shutterSpeed The shutter speed value (0-255).
      */
     void setLightSensitivity(uint8_t shutterSpeed);
 
     /**
-     * @brief Sets the gain factor for light sensing.
-     * @param gainFactor The gain multiplier (e.g., 1x, 4x, 16x, 64x).
-     */
-    void setLightGain(uint8_t gainFactor);
-
-    /**
-     * @brief Sets the range of the proximity sensor.
-     * @param level The range level (higher values increase sensitivity).
-     */
-    void setProximitySensorRange(uint8_t level);
-
-    /**
-     * @brief Reads the proximity sensor value.
-     * @returns The detected proximity value (0-255).
+     * @brief Reads the proximity sensor data.
+     * @returns Proximity value (0-255).
      */
     uint8_t readProximity();
 
     /**
-     * @brief Applies correction factors to proximity sensor readings.
-     * @param upRight Correction factor for upward and right directions.
-     * @param downLeft Correction factor for downward and left directions.
+     * @brief Corrects proximity sensor offset values.
+     * @param upRight Offset for the upper-right proximity sensor.
+     * @param downLeft Offset for the lower-left proximity sensor.
      */
     void correctProximity(int8_t upRight, int8_t downLeft);
 
     /**
-     * @brief Sets interrupt threshold values for ambient light sensing.
-     * @param low The lower threshold value.
-     * @param high The upper threshold value.
+     * @brief Sets the interrupt threshold levels for ambient light sensing.
+     * @param low Lower threshold value.
+     * @param high Upper threshold value.
      */
     void setLightSensingInterruptThreshold(uint16_t low, uint16_t high);
 
     /**
-     * @brief Sets interrupt threshold values for proximity sensing.
-     * @param low The lower threshold value.
-     * @param high The upper threshold value.
+     * @brief Sets the interrupt threshold levels for proximity sensing.
+     * @param low Lower threshold value.
+     * @param high Upper threshold value.
      */
     void setProximitySensingInterruptThreshold(uint8_t low, uint8_t high);
 
     /**
-     * @brief Sets the persistence filters for light and proximity sensing.
-     * @param light Number of consecutive light readings before an interrupt is triggered.
-     * @param proximity Number of consecutive proximity readings before an interrupt is triggered.
+     * @brief Sets the persistence settings for light and proximity interrupts.
+     * @param light Light interrupt persistence (0-15).
+     * @param proximity Proximity interrupt persistence (0-15).
      */
     void setPersistence(uint8_t light, uint8_t proximity);
 
     /**
      * @brief Sets the sensitivity level for proximity sensing.
-     * @param sensitivity The proximity sensitivity level (higher values increase sensitivity).
+     * @param sensitivity Sensitivity value (0-3).
      */
     void setProximitySensitivity(uint8_t sensitivity);
 
     /**
-     * @brief Reads the RGB color and clear channel data.
-     * @returns A Color struct containing red, green, blue, and clear values.
+     * @brief Sets the proximity sensor LED drive current level.
+     * @param level LED current level (0-3).
+     */
+    void setProximitySensorRange(uint8_t level);
+
+    /**
+     * @brief Sets the gain factor for light sensing.
+     * @param gainFactor Gain factor (0-3).
+     */
+    void setLightGain(uint8_t gainFactor);
+
+    /**
+     * @brief Reads the color data (Clear, Red, Green, Blue).
+     * @returns A Color object containing the RGB and clear values.
      */
     Color readColorData();
 
     /**
-     * @brief Sets the gesture sensitivity by configuring pulse length and count.
-     * @param pulseLength The duration of each pulse (4, 8, 16, or 32 µs).
-     * @param pulseCount The number of pulses per gesture event.
+     * @brief Sets the gain factor for gesture sensing.
+     * @param gainFactor Gain factor (0-3).
+     */
+    void setGestureGain(uint8_t gainFactor);
+
+    /**
+     * @brief Sets the pulse length and count for gesture detection.
+     * @param pulseLength Pulse length (0-3).
+     * @param pulseCount Pulse count (0-63).
      */
     void setGestureSensitivity(uint8_t pulseLength, uint8_t pulseCount);
 
     /**
-     * @brief Sets the gain level for gesture detection.
-     * @param factor The gain factor (1x, 2x, 4x, or 8x).
-     */
-    void setGestureGain(uint8_t factor);
-
-    /**
-     * @brief Sets the gesture detection mode.
-     * @param mode The gesture detection mode.
+     * @brief Sets the mode of the gesture detector.
+     * @param mode Gesture detector mode (0-3).
      */
     void setGestureDetectorMode(uint8_t mode);
 
     /**
-     * @brief Reads gesture data and determines the direction.
-     * @returns A Gesture struct containing movement values for up, down, left, and right.
+     * @brief Enables or disables gesture sensing interrupts.
+     * @param state True to enable, false to disable.
+     */
+    void enableGestureInterrupt(bool state);
+
+    /**
+     * @brief Reads raw gesture data from the FIFO buffer.
+     * @returns A Gesture object containing the gesture data.
      */
     Gesture readGesture();
 
     /**
-     * @brief Resolves the gesture direction as a string based on primary and secondary movements.
-     * @param gesture The Gesture struct containing movement values.
-     * @param threshold The minimum required difference between primary and secondary movements.
-     * @returns A string representing the resolved gesture (e.g., "Up", "Right + Down").
+     * @brief Interprets gesture data and resolves it into a named direction.
+     * @param gesture The Gesture object containing raw sensor readings.
+     * @param threshold Threshold percentage for secondary gestures.
+     * @returns A string representing the detected gesture.
      */
     String resolveGesture(Gesture gesture, uint8_t threshold);
 
 private:
     SensorHub sensorHub;
     uint8_t setupByte = 0x01, ctrl = 0x00, gesCtrl = 0x00;
-
-    /**
-     * @brief Checks if the sensor is connected.
-     * @returns True if the sensor is detected, false otherwise.
-     */
-    bool isConnected();
 };
 
 /**

@@ -63,10 +63,6 @@ bool BME688::begin(uint8_t mode, uint8_t oss)
     return isConnected();
 }
 
-BME688::~BME688()
-{
-}
-
 void BME688::printLog(String log)
 {
     if (printLogs)
