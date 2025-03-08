@@ -265,7 +265,7 @@ String APDS9960::resolveGesture(Gesture gesture, uint8_t threshold)
         secondary = directions[1].name;
     }
 
-    return secondary.isEmpty() ? primary : primary + " + " + secondary;
+    return secondary == "" ? primary : primary + " + " + secondary;
 }
 
 void APDS9960::printLog(String log)

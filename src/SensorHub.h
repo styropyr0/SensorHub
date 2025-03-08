@@ -2,12 +2,17 @@
 #define SensorHub_H
 
 #include "Arduino.h"
+#include <Wire.h>
 
 #ifdef __cplusplus
 
+#if SOC_I2S_SUPPORTS_ADC
+#include <driver/i2s.h>
+#endif
+
 /**
  * @class SensorHub
- * @brief Core communication and data processing hub for I2C-based sensors.
+ * @brief Core communication and data processing hub for I2C and UART based sensors.
  *
  * The SensorHub class serves as a foundational interface for sensor communication,
  * providing essential I2C read and write operations. It enables seamless integration
@@ -20,14 +25,28 @@
 class SensorHub
 {
 public:
+#if SOC_I2S_SUPPORTS_ADC
+
+#define I2S_CHANNEL_LEFT 0
+#define I2S_CHANNEL_RIGHT 1
+#define I2S_CHANNEL_STEREO 2
+
+    /**
+     * @brief Constructs a SensorHub object with the specified I2S Configuration.
+     * @param ws The word select pin of the sensor.
+     * @param bclock The bit clock pin of the sensor.
+     * @param data The data pin of the sensor.
+     * @param samplingRate The sampling rate of the sensor.
+     */
+    SensorHub(uint8_t ws, uint8_t bclock, uint8_t data, uint32_t samplingRate, uint8_t channel);
+
+#endif
+
     /**
      * @brief Constructs a SensorHub object with the specified I2C address.
      * @param addr The I2C address of the sensor.
      */
     SensorHub(uint8_t addr);
-
-    /// @brief The I2C address of the sensor.
-    uint8_t ADDR = 0x00;
 
     /**
      * @brief Writes a byte of data to a specified register.
@@ -35,6 +54,13 @@ public:
      * @param data The byte of data to write.
      */
     void i2c_execute(uint8_t reg, uint8_t data);
+
+    /**
+     * @brief Writes a byte of data to a specified register.
+     * @param reg The register address to write to.
+     * @param data The 16bits of data to write.
+     */
+    void i2c_execute_16bit(uint8_t reg, uint16_t data);
 
     /**
      * @brief Reads one or more bytes from a specified register.
@@ -98,6 +124,16 @@ public:
      * @brief Destroys the SensorHub object and releases resources.
      */
     ~SensorHub();
+
+private:
+    uint8_t mode = 0;
+
+    // I2C
+    uint8_t ADDR = 0x00;
+
+    // I2S
+    uint32_t samplingRate = 0;
+    uint8_t ws = 0, bclock = 0, data = 0;
 };
 
 #endif // __cplusplus

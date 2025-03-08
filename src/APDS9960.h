@@ -209,7 +209,7 @@ private:
     SensorHub sensorHub;
     uint8_t setupByte = 0x01, ctrl = 0x00, gesCtrl = 0x00;
     bool printLogs = true;
-    
+
     void printLog(String log);
 };
 

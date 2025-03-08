@@ -1,8 +1,6 @@
 #ifndef BME688DEFS
 #define BME688DEFS
 
-#include "Arduino.h"
-
 #ifdef __cplusplus
 
 #define ADC_MAX 1023.0

@@ -1,8 +1,6 @@
 #ifndef BME688DEFS
 #define BME688DEFS
 
-#include "Arduino.h"
-
 #ifdef __cplusplus
 
 #define BME688_I2C_ADDR_PRIMARY 0x77

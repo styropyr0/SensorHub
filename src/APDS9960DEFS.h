@@ -1,8 +1,6 @@
 #ifndef APDSDEFS
 #define APDSDEFS
 
-#include "Arduino.h"
-
 #ifdef __cplusplus
 
 // I2C address

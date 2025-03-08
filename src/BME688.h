@@ -14,7 +14,7 @@
  * This class provides functions to read temperature, pressure, humidity, and gas resistance
  * from the Bosch BME688 environmental sensor. It supports different oversampling settings
  * and operation modes.
- * 
+ *
  * @author Saurav Sajeev
  */
 class BME688
