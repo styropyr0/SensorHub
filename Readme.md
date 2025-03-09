@@ -1,4 +1,4 @@
-# SensorHub Library
+# SensorHub Library (BETA)
 
 The SensorHub library is an Arduino library designed to interface with a variety of environmental sensors. It provides a unified API to read data from multiple sensors, including temperature, humidity, pressure, gas concentration, UV intensity, and particulate matter. This library simplifies the process of integrating multiple sensors into a single project, making it easier to develop comprehensive environmental monitoring systems.
 
