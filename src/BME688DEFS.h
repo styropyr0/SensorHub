@@ -143,6 +143,10 @@
 #define BME_688_CHIP_ID_REG 0xD0
 #define BME_688_CHIP_ID 0x61
 
+// Correction factor
+#define BME_688_GAS_CORRECTION 1.3801
+#define BME_688_GAS_CORRECTION_NIL 1.0
+
 // ------------ ERRORS -----------------
 
 #define BME_688_CHECK_CONN_ERR "BME688 is disconnected. Check connections or make sure it is working."

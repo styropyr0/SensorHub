@@ -146,6 +146,9 @@ private:
     // Gas Sensor Profile data
     uint8_t measProfile = 0, targetTemp = 0, targetWaitTime = 0;
 
+    // Pressure correction factor
+    float cf_p = BME_688_GAS_CORRECTION_NIL;
+
     int32_t readRawTemp();
     int32_t readRawPres();
     int16_t readRawHum();

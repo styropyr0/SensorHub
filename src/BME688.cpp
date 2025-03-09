@@ -256,7 +256,9 @@ double BME688::readPressure()
 {
     sensorHub.i2c_execute(BME_688_CTRL_MEAS_REG, temp_oss << 5 | press_oss << 2 | mode);
     delay(10);
-    return readUCPres(readRawPres());
+    float ps = readUCPres(readRawPres()) * cf_p;
+    cf_p = BME_688_GAS_CORRECTION_NIL;
+    return ps;
 }
 
 double BME688::readHumidity()
@@ -321,6 +323,7 @@ double BME688::startGasMeasurement(uint8_t profile, uint8_t waitTime)
     var2 *= int32_t(3);
     var2 = int32_t(4096) + var2;
     g_res = 1000000.0f * (float)var1 / (float)var2;
+    cf_p = BME_688_GAS_CORRECTION;
     return g_res;
 }
 

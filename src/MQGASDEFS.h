@@ -27,7 +27,7 @@
 #define MQ_MQ2_A 171.39
 #define MQ_MQ2_B -1.46
 #define MQ_MQ135_A 5.91
-#define MQ_MQ135_B -1.71
+#define MQ_MQ135_B -0.5
 
 // Calibration constants
 #define MQ_MQ2_CAL_R0 110.0
