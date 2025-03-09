@@ -51,7 +51,7 @@ public:
     bool begin();
 
     /**
-     * @brief Reads the gas concentration or sensor resistance.
+     * @brief Reads the gas concentration.
      *
      * This method fetches the data from the MQ gas sensor connected to the specified pin.
      * The data is processed to return either the sensor resistance or a calculated

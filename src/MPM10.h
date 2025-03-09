@@ -11,9 +11,10 @@
  * Read UV Intensity and UV Index from the sensor, with configurable units.
  * @author Saurav Sajeev
  */
-class ML8511
+class MPM10
 {
-    
+    public:
+    MPM10(uint8_t mode);
 };
 
 #endif
