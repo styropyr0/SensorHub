@@ -22,7 +22,14 @@ MPM10_DATA MPM10::readData()
 
     if (this->mode == MPM10_MODE_UART)
     {
-        Serial2.begin(MPM_10_BAUD_RATE, SERIAL_8N1, rx, tx);
+#ifdef ARDUINO_ARCH_ESP32
+        Serial2.begin(MPM_10_BAUD_RATE, SERIAL_8N1, rx, tx); 
+#elif defined(ARDUINO_SAM_DUE)
+        Serial2.begin(MPM_10_BAUD_RATE, SERIAL_8N1); 
+#else
+        Serial.begin(MPM_10_BAUD_RATE);
+#error "Unsupported board! Please use a supported board."
+#endif
         unsigned long startTime = millis();
         uint8_t index = 0;
         while (millis() - startTime < MPM10_TIMEOUT)
