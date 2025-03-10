@@ -6,6 +6,15 @@ SensorHub::SensorHub(uint8_t addr) : ADDR(addr)
     Wire.begin();
 }
 
+SensorHub::SensorHub(uint8_t ws, uint8_t bclock, uint8_t data, uint32_t samplingRate, uint8_t channel)
+{
+    this->ws = ws;
+    this->bclock = bclock;
+    this->data = data;
+    this->samplingRate = samplingRate;
+    mode = 2;
+}
+
 void SensorHub::i2c_execute(uint8_t reg, uint8_t data)
 {
     Wire.beginTransmission(ADDR);
