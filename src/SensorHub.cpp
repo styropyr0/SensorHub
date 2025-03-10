@@ -1,9 +1,5 @@
 #include "SensorHub.h"
 
-/**
- * Parent class for all sensors
- */
-
 SensorHub::SensorHub(uint8_t addr) : ADDR(addr)
 {
     mode = 1;

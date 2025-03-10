@@ -12,7 +12,7 @@
 
 /**
  * @class SensorHub
- * @brief Core communication and data processing hub for I2C and UART based sensors.
+ * @brief Core communication and data processing hub for I2C based sensors.
  *
  * The SensorHub class serves as a foundational interface for sensor communication,
  * providing essential I2C read and write operations. It enables seamless integration
