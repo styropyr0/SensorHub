@@ -6,6 +6,7 @@ SensorHub::SensorHub(uint8_t addr) : ADDR(addr)
     Wire.begin();
 }
 
+#if SOC_I2S_SUPPORTS_ADC
 SensorHub::SensorHub(uint8_t ws, uint8_t bclock, uint8_t data, uint32_t samplingRate, uint8_t channel)
 {
     this->ws = ws;
@@ -14,6 +15,7 @@ SensorHub::SensorHub(uint8_t ws, uint8_t bclock, uint8_t data, uint32_t sampling
     this->samplingRate = samplingRate;
     mode = 2;
 }
+#endif
 
 void SensorHub::i2c_execute(uint8_t reg, uint8_t data)
 {
