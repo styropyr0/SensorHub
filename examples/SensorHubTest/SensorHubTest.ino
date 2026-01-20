@@ -1,6 +1,6 @@
 #include <SensorHub.h>
 
-SensorHub sensor(0x40); // Example I2C address, replace it with the actual address of your sensor
+SensorHub sensor(0x77); // Example I2C address, replace it with the actual address of your sensor
 
 void setup() {
     Serial.begin(115200);
@@ -12,6 +12,7 @@ void setup() {
 }
 
 void loop() {
-    Serial.println(sensor.i2c_readByte(0x00, 1));
+    uint8_t data;
+    Serial.println(sensor.i2c_readByte(0x00, &data, 1));
     delay(1000);
 }
